@@ -1,17 +1,17 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/springboot_init
+    url: jdbc:mysql://localhost:3306/yixianbi
     username: root
     password: jiangfei123
 
 server:
-  port: 8080
+  port: 8081
 
 # mybatis-plus 配置
 mybatis-plus:
   configuration:
-    map-underscore-to-camel-case: true
+    map-underscore-to-camel-case: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
@@ -30,7 +30,8 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-      packages-to-scan: com.yixian.springbootinit.controller
+      packages-to-scan: com.yixian.yixianbi.controller
+  default-flat-param-object: true
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true
@@ -41,7 +42,7 @@ yixian:
   jwt:
     # 配置jwt密钥
     secret-key: yixian
-    # 配置jwt超时时间
-    ttl: 7200000
+    # 配置jwt超时时间 (一天)
+    ttl: 86400000
     # 配置token名称
     token-name: token
