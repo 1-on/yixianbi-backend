@@ -254,7 +254,6 @@ public class ChartController {
      *
      * @param multipartFile
      * @param genChartByAiDTO
-     * @param BiResponse
      * @return
      */
     @PostMapping("/gen")
@@ -268,8 +267,7 @@ public class ChartController {
             throw new BaseException(MessageConstant.REQUEST_PARAMS_ERROR);
         }
 
-        // 模型iD
-        long modelId = 1758496941069033473L;
+        // 预设
         final String prompt = "你是一个数据分析师和前端开发专家，接下来我会按照以下固定格式给你提供内容：\n" +
                 "分析需求：\n" +
                 "{数据分析的需求或者目标}\n" +
@@ -277,7 +275,7 @@ public class ChartController {
                 "{csv格式的原始数据，用,作为分隔符}\n" +
                 "请根据这两部分内容，按照以下指定格式生成内容（此外不要输出任何多余的开头、结尾、注释）\n" +
                 "【【【【【\n" +
-                "{前端 Echarts V5 的 option 配置对象js代码，合理地将数据进行可视化，不要生成任何多余的内容，比如注释}\n" +
+                "{此处生成前端 Echarts V5 的 option 配置对象json代码,注意是json格式，属性名称用引号引起来，表格标题以对象形式给出,例如  title: { text: '标题' },除此之外不要生成任何多余的内容，比如注释}\n" +
                 "【【【【【\n" +
                 "{明确的数据分析结论、越详细越好，不要生成多余的注释}";
         /*
@@ -307,7 +305,7 @@ public class ChartController {
 
 
         // 拿到返回结果
-        String result = aiManager.doChat(modelId, userInput.toString());
+        String result = aiManager.doChatWithWXYY(userInput.toString());
 
         // 对结果进行分割
         String[] split = result.split("【【【【【");
@@ -316,8 +314,25 @@ public class ChartController {
         }
         // 图表数据
         String genChart = split[1].trim();
+//        if(genChart.length()>=4){
+//            genChart = genChart.substring(2, genChart.length() - 2);
+//        }
+        // 查找最后一个 "option" 的位置
+        int lastIndex = genChart.lastIndexOf("option");
+        if(lastIndex!=-1){
+             genChart = genChart.substring(lastIndex+9);
+        }
+        System.err.println(genChart);
+
+//        // 找到前导字符串的结束位置
+//        int startIndex = genJsonChart.indexOf("```js") + "```js".length();
+//        // 找到尾部字符串的起始位置
+//        int endIndex = genJsonChart.lastIndexOf("```");
+//        String genChart = genJsonChart.substring(startIndex, endIndex);
+
         // 分析结论
         String genResult = split[2].trim();
+        System.err.println(genResult);
         // 插入数据库
         Chart chart = new Chart();
         chart.setName(name);
