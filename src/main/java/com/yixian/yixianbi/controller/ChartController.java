@@ -1,5 +1,6 @@
 package com.yixian.yixianbi.controller;
 
+import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -10,6 +11,7 @@ import com.yixian.yixianbi.constant.MessageConstant;
 import com.yixian.yixianbi.context.BaseContext;
 import com.yixian.yixianbi.exception.BaseException;
 import com.yixian.yixianbi.manager.AiManager;
+import com.yixian.yixianbi.manager.RateLimiterManager;
 import com.yixian.yixianbi.model.dto.chart.*;
 import com.yixian.yixianbi.model.entity.Chart;
 import com.yixian.yixianbi.model.entity.User;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -44,6 +47,9 @@ public class ChartController {
 
     @Resource
     private AiManager aiManager;
+
+    @Resource
+    private RateLimiterManager rateLimiterManager;
 
     // region 增删改查
 
@@ -267,6 +273,25 @@ public class ChartController {
             throw new BaseException(MessageConstant.REQUEST_PARAMS_ERROR);
         }
 
+        // 文件校验
+        long size = multipartFile.getSize();
+        String originalFilename = multipartFile.getOriginalFilename();
+        // 校验文件大小
+        final long ONE_MB = 1024 * 1024;
+        if (size > ONE_MB) {
+            throw new BaseException(MessageConstant.FILE_TOO_LARGE);
+        }
+        // 判断后缀是否符合
+        String suffix = FileUtil.getSuffix(originalFilename);
+        final List<String> validFileSuffixList = Arrays.asList("png", "jpg", "svg", "webp", "jpeg");
+        if (!validFileSuffixList.contains(suffix)) {
+            throw new BaseException(MessageConstant.INVALID_FILE);
+        }
+        // 用户id
+        Long userId = BaseContext.getCurrentId();
+        // 限流
+        rateLimiterManager.doRateLimiter("genChartByAi_" + userId, 1);
+
         // 预设
         final String prompt = "你是一个数据分析师和前端开发专家，接下来我会按照以下固定格式给你提供内容：\n" +
                 "分析需求：\n" +
@@ -319,8 +344,8 @@ public class ChartController {
 //        }
         // 查找最后一个 "option" 的位置
         int lastIndex = genChart.lastIndexOf("option");
-        if(lastIndex!=-1){
-             genChart = genChart.substring(lastIndex+9);
+        if (lastIndex != -1) {
+            genChart = genChart.substring(lastIndex + 9);
         }
         System.err.println(genChart);
 
@@ -341,7 +366,7 @@ public class ChartController {
         chart.setChartType(chartType);
         chart.setGenChart(genChart);
         chart.setGenResult(genResult);
-        chart.setUserId(BaseContext.getCurrentId());
+        chart.setUserId(userId);
         chartService.save(chart);
         // 返回数据给前端
         BiResponse biResponse = new BiResponse();

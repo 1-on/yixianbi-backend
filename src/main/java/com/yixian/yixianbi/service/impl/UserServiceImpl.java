@@ -44,22 +44,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
-        // 1.校验参数
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
-            throw new BaseException(MessageConstant.REQUEST_PARAMS_ERROR);
-        }
-        // 账号过短
-        if (userAccount.length() < 4) {
-            throw new BaseException(MessageConstant.ACCOUNT_TOO_SHORT);
-        }
-        // 密码过短
-        if (userPassword.length() < 8 || checkPassword.length() < 8) {
-            throw new BaseException(MessageConstant.PASSWORD_TOO_SHORT);
-        }
-        // 两次密码不一致
-        if (!userPassword.equals(checkPassword)) {
-            throw new BaseException(MessageConstant.PASSWORD_INCONSISTENCY);
-        }
+//        // 1.校验参数
+//        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
+//            throw new BaseException(MessageConstant.REQUEST_PARAMS_ERROR);
+//        }
+//        // 账号过短
+//        if (userAccount.length() < 4) {
+//            throw new BaseException(MessageConstant.ACCOUNT_TOO_SHORT);
+//        }
+//        // 密码过短
+//        if (userPassword.length() < 8 || checkPassword.length() < 8) {
+//            throw new BaseException(MessageConstant.PASSWORD_TOO_SHORT);
+//        }
+//        // 两次密码不一致
+//        if (!userPassword.equals(checkPassword)) {
+//            throw new BaseException(MessageConstant.PASSWORD_INCONSISTENCY);
+//        }
         // 账户不能重复
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount", userAccount);
