@@ -17,6 +17,8 @@ public class MessageConstant {
     public static final String NO_AUTH_ERROR = "无权限";
     public static final String AI_GEN_ERROR = "AI生成错误";
     public static final String FILE_TOO_LARGE = "文件太大";
-    public static final String INVALID_FILE = "文件不符合";
+    public static final String INVALID_FILE = "文件类型不符合";
     public static final String TOO_MANY_REQUEST = "请求过于频繁";
+    public static final String SYSTEM_ERROR = "系统错误";
+    public static final String SAVE_ERROR = "保存失败";
 }

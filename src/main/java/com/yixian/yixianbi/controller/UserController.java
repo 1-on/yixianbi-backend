@@ -23,7 +23,7 @@ public class UserController {
 
     @GetMapping("/ok")
     public String ok() {
-        return "ok";
+        return "ok成功";
     }
 
     /**

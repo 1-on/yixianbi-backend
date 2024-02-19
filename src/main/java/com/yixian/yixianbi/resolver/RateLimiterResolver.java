@@ -1,4 +1,4 @@
-package com.yixian.yixianbi.manager;
+package com.yixian.yixianbi.resolver;
 
 import com.google.common.util.concurrent.RateLimiter;
 import com.yixian.yixianbi.constant.MessageConstant;
@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 提供RateLimiter限流服务
  */
 @Service
-public class RateLimiterManager {
+public class RateLimiterResolver {
 
 
     /**

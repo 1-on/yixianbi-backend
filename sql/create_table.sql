@@ -34,5 +34,7 @@ create table if not exists chart
     userId     bigint                             null comment '创建用户 Id',
     createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    status       varchar(128) not null default 'wait' comment 'wait,running,succeed,failed',
+    execMessage  text   null comment '执行信息',
     isDelete   tinyint  default 0                 not null comment '是否删除'
 ) comment '图表信息表' collate = utf8mb4_unicode_ci;

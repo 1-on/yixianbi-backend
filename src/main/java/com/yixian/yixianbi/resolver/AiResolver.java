@@ -1,4 +1,4 @@
-package com.yixian.yixianbi.manager;
+package com.yixian.yixianbi.resolver;
 
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSON;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class AiManager {
+public class AiResolver {
 
     public String doChatWithWXYY(String message) {
         // 创建 JSON 对象

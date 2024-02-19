@@ -46,3 +46,6 @@ yixian:
     ttl: 86400000
     # 配置token名称
     token-name: token
+ai:
+  client:
+    access-token: 24.31a61e759ce9cdefbab8b6e08bb5fc8c.2592000.1710760834.282335-51804297

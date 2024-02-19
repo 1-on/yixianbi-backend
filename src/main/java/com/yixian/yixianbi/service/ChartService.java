@@ -1,7 +1,10 @@
 package com.yixian.yixianbi.service;
 
+import com.yixian.yixianbi.model.dto.chart.GenChartByAiDTO;
 import com.yixian.yixianbi.model.entity.Chart;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yixian.yixianbi.model.vo.BiResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
 * @author jiangfei
@@ -10,4 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface ChartService extends IService<Chart> {
 
+    BiResponse genChartByAi(MultipartFile multipartFile, GenChartByAiDTO genChartByAiDTO);
+
+    BiResponse genChartByAiAsync(MultipartFile multipartFile, GenChartByAiDTO genChartByAiDTO);
 }
