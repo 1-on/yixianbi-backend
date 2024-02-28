@@ -7,13 +7,19 @@ import com.yixian.yixianbi.model.vo.BiResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
-* @author jiangfei
-* @description 针对表【chart(图表信息表)】的数据库操作Service
-* @createDate 2024-02-15 16:31:00
-*/
+ * @author jiangfei
+ * @description 针对表【chart(图表信息表)】的数据库操作Service
+ * @createDate 2024-02-15 16:31:00
+ */
 public interface ChartService extends IService<Chart> {
 
     BiResponse genChartByAi(MultipartFile multipartFile, GenChartByAiDTO genChartByAiDTO);
 
     BiResponse genChartByAiAsync(MultipartFile multipartFile, GenChartByAiDTO genChartByAiDTO);
+
+    BiResponse genChartByAiAsyncMq(MultipartFile multipartFile, GenChartByAiDTO genChartByAiDTO);
+
+    public boolean isValidJson(String jsonString);
+
+    void handleChartUpdateError(long chartId, String execMessage);
 }

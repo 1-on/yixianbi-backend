@@ -278,7 +278,32 @@ public class ChartController {
         }
 
 //        BiResponse biResponse = chartService.genChartByAi(multipartFile, genChartByAiDTO);
-        BiResponse biResponse = chartService.genChartByAiAsync(multipartFile, genChartByAiDTO);
+        BiResponse biResponse = chartService.genChartByAi(multipartFile, genChartByAiDTO);
+
+        return Result.success(biResponse);
+
+    }
+
+    /**
+     * 文件上传 (异步 消息队列)
+     *
+     * @param multipartFile
+     * @param genChartByAiDTO
+     * @return
+     */
+    @PostMapping("/gen/async")
+    public Result<BiResponse> genChartByAiAsyncMq(@RequestPart("file") MultipartFile multipartFile,
+                                                  GenChartByAiDTO genChartByAiDTO) {
+        String name = genChartByAiDTO.getName();
+        String goal = genChartByAiDTO.getGoal();
+        String chartType = genChartByAiDTO.getChartType();
+        // 校验
+        if (StringUtils.isBlank(goal) || (StringUtils.isNotBlank(name) && name.length() > 100)) {
+            throw new BaseException(MessageConstant.REQUEST_PARAMS_ERROR);
+        }
+
+//        BiResponse biResponse = chartService.genChartByAi(multipartFile, genChartByAiDTO);
+        BiResponse biResponse = chartService.genChartByAiAsyncMq(multipartFile, genChartByAiDTO);
 
         return Result.success(biResponse);
 

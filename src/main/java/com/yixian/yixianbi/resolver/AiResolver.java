@@ -13,6 +13,7 @@ import java.util.Map;
 @Service
 public class AiResolver {
 
+
     public String doChatWithWXYY(String message) {
         // 创建 JSON 对象
         JSONObject jsonObject = new JSONObject();
@@ -40,5 +41,6 @@ public class AiResolver {
         System.err.println(string);
         return string;
     }
+
 
 }

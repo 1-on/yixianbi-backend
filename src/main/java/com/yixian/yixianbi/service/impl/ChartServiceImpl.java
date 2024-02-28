@@ -1,13 +1,11 @@
 package com.yixian.yixianbi.service.impl;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yixian.yixianbi.common.Result;
+import com.yixian.yixianbi.bizmq.BiMessageProducer;
 import com.yixian.yixianbi.constant.MessageConstant;
 import com.yixian.yixianbi.context.BaseContext;
 import com.yixian.yixianbi.exception.BaseException;
@@ -49,6 +47,9 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
 
     @Resource
     private ThreadPoolExecutor threadPoolExecutor;
+
+    @Resource
+    private BiMessageProducer biMessageProducer;
 
     /**
      * 生成图表信息 （同步）
@@ -294,7 +295,64 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         return biResponse;
     }
 
-    public static boolean isValidJson(String jsonString) {
+    /**
+     * 使用 消息队列 生成图表信息
+     *
+     * @param multipartFile
+     * @param genChartByAiDTO
+     * @return
+     */
+    @Override
+    public BiResponse genChartByAiAsyncMq(MultipartFile multipartFile, GenChartByAiDTO genChartByAiDTO) {
+        String name = genChartByAiDTO.getName();
+        String goal = genChartByAiDTO.getGoal();
+        String chartType = genChartByAiDTO.getChartType();
+
+        // 文件校验
+        long size = multipartFile.getSize();
+        String originalFilename = multipartFile.getOriginalFilename();
+        // 校验文件大小
+        final long ONE_MB = 1024 * 1024;
+        if (size > ONE_MB) {
+            throw new BaseException(MessageConstant.FILE_TOO_LARGE);
+        }
+        // 判断后缀是否符合
+        String suffix = FileUtil.getSuffix(originalFilename);
+        final List<String> validFileSuffixList = Arrays.asList("xlsx", "xls");
+        if (!validFileSuffixList.contains(suffix)) {
+            throw new BaseException(MessageConstant.INVALID_FILE);
+        }
+        // 用户id
+        Long userId = BaseContext.getCurrentId();
+        // 限流
+        rateLimiterResolver.doRateLimiter("genChartByAi_" + userId, 1);
+
+        // 压缩后的数据
+        String csvData = ExcelUtils.excelToCsv(multipartFile);
+
+        // 插入数据库
+        Chart chart = new Chart();
+        chart.setName(name);
+        chart.setGoal(goal);
+        chart.setChartData(csvData);
+        chart.setChartType(chartType);
+        chart.setUserId(userId);
+        // 设置任务状态为排队
+        chart.setStatus(ChartStatusEnum.WAIT.getValue());
+        boolean save = this.save(chart);
+        if (!save) {
+            throw new BaseException(MessageConstant.SAVE_ERROR);
+        }
+
+        biMessageProducer.sendMessage(String.valueOf(chart.getId()));
+
+        // 返回数据给前端
+        BiResponse biResponse = new BiResponse();
+        biResponse.setChartId(chart.getId());
+        return biResponse;
+    }
+
+    public boolean isValidJson(String jsonString) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.readTree(jsonString);
@@ -307,7 +365,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         }
     }
 
-    private void handleChartUpdateError(long chartId, String execMessage) {
+    public void handleChartUpdateError(long chartId, String execMessage) {
         Chart updateChartResult = new Chart();
         updateChartResult.setId(chartId);
         updateChartResult.setStatus("failed");
