@@ -1,40 +1,43 @@
-# SpringBoot 项目初始化模板
+# 智能 BI 平台DEMO（AIGC应用）
+
+（此仓库为后端代码）[前端仓库](https://github.com/1-on/yixianbi-frontend)
+[toc]
+
 > 作者：[一弦](https://github.com/1-on)
 
-基于java SpringBoot 的项目初始化模板，整合了常用框架和示例代码
+### 项目介绍
 
+基于React + SpringBoot + MQ + AIGC 的 智能数据分析平台。
+相比于传统 BI，用户只需要导入原始数据集，输入分析目标，就能够自动生成可视化图标以及结论。
+<br>
+由于AI技术的限制，现在还不能做到那么"智能"，图标及结论仅供参考！
 
-## 模板特点
+### 技术栈
 
-### 主流框架 & 特性
-- Spring Boot 3.2.2
-- Spring MVC
-- Mybatis + MyBatis Plus
-- Spring Boot 调试工具和项目处理器
+#### 后端
 
-### 数据存储
+- springboot 3.2.2
 - MySQL 数据库
+- MyBatis-Plus 以及 MyBatis X 自动生成
+- RateLimiter 限流
+- RabbitMQ 消息队列
+- AiGenerate SDK (自己开发的调用AI的简易SDK,[地址](https://mvnrepository.com/artifact/cn.yixianweb/AiGenerate))
+- JDK 线程池以及异步化
+- Easy Excel 处理表格数据
+- Swagger + Knife4j 接口文档生成
 
+#### 前端
 
-### 工具类
-- Lombok 注解
+- React 18
+- Ant Design Pro 6.x 脚手架
+- Ant Design & ProComponents 组件库
+- Echarts 可视化库
+- OpenAPI 前端代码生成
 
-### 业务特性
-- 全局异常处理器
-- 封装通过响应类
-- Swagger + Knife4j 接口文档
-- Jwt 登录校验
-- 全局跨域请求
-- ThreadLocal 获取上下文信息
-- 自定义配置信息
+### 项目截图
 
-### 业务功能
-- 用户登录、注册
-
-### 单元测试
-
-
-### 架构设计
-
-- 合理分层
-
+![image](https://github.com/1-on/yixianbi-backend/blob/master/doc/imgs/img.png)
+![image](https://github.com/1-on/yixianbi-backend/blob/master/doc/imgs/img_1.png)
+![image](https://github.com/1-on/yixianbi-backend/blob/master/doc/imgs/img_2.png)
+![image](https://github.com/1-on/yixianbi-backend/blob/master/doc/imgs/img_3.png)
+![image](https://github.com/1-on/yixianbi-backend/blob/master/doc/imgs/img_4.png)
